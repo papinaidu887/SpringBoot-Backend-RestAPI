@@ -11,6 +11,8 @@ public class SpringbootBackendApplication {
 		
 		
 		System.out.println(" The entry point of spring boot main method...........");
+		
+		System.out.println("the entry of first methos is main method.......");
 	}
 
 }
