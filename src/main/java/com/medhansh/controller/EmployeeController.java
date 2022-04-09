@@ -1,10 +1,13 @@
 package com.medhansh.controller;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -28,25 +31,25 @@ public class EmployeeController {
 	@Autowired
 	private EmployeeRepository employeeRepository;
 	
-	// get all employees
+	
+	// get All Employees Data
 	@GetMapping("/employees")
 	public List<Employee> getAllEmployees()
 	{
 		return employeeRepository.findAll();
 	}
 	
-	// to create Employee Rest API
-	@PostMapping("/addEmployee")
+	// to Create Employee or update employee
+	@PostMapping("/employee")
 	public Employee createEmployee(@RequestBody Employee employee)
 	{
 		System.out.println(" create employee data is successfully ============================== " );
-		return employeeRepository.save(employee);
+		return employeeRepository.save(employee);	
 	}
 	
-	
-	// get employee by Id rest api....
+	// to get Employee based on id
 	  
-	@GetMapping("/employees/{id}") 
+	@GetMapping("/employee/{id}") 
 	public ResponseEntity<Employee> getEmployeeById(@PathVariable Long id) throws ResourceNotFoundExeption 
 	{
 		Employee employee = employeeRepository.findById(id)
@@ -54,25 +57,16 @@ public class EmployeeController {
 		return ResponseEntity.ok(employee); 
 	}
 	
-	// update employee rest api
-	@PutMapping("/employees/{id}")
-	public ResponseEntity<Employee> updateEmployee(@PathVariable("id") Long id, @RequestBody Employee employeeBean)
+	// to delete employee based on id
+	@DeleteMapping("/employees/{id}")
+	public ResponseEntity<Map<String, Boolean>> deleteEmployee(@PathVariable Long id)
 	{
-		Employee employee = employeeRepository.findById(id)
-					.orElseThrow(() -> new	ResourceNotFoundExeption("Employee not exist with id :" +id));
-		
-		employee.setFirstName(employeeBean.getFirstName());
-		employee.setLastName(employeeBean.getLastName());
-		employee.setEmailId(employeeBean.getEmailId());
-		
-		Employee updateEmployee = employeeRepository.save(employee);
-		return ResponseEntity.ok(updateEmployee);
-	}
-	
-	
-	
-	 
-	
-	
+		Employee employee = employeeRepository.findById(id).
+				orElseThrow(() -> new	ResourceNotFoundExeption("Employee not exist with id :" +id));
+		employeeRepository.delete(employee);
+		Map<String, Boolean> response = new HashMap<>();
+		response.put("deleted", Boolean.TRUE);
+		return ResponseEntity.ok(response);
+	}	
 
 }
